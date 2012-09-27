@@ -28,33 +28,34 @@ import org.openimaj.video.capture.VideoCapture;
 
 /**
  * OpenIMAJ Hello world!
- *
+ * 
  */
 public class CakeCam {
-    public static void main( String[] args ) {
-        
-        VideoCapture vc = null;
+	public static void main(String[] args) {
+
+		VideoCapture vc = null;
 		try {
-			vc = new VideoCapture(640,480);
+			vc = new VideoCapture(640, 480);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block	
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        VideoDisplay<MBFImage> vd = VideoDisplay.createOffscreenVideoDisplay(vc);
-        
-        VideoDisplayListener<MBFImage> listener = new VideoDisplayListener<MBFImage>() {
-        	String fileName = "/tmp/cake.png";
-        	int frameCount = 0;
-        	
+		VideoDisplay<MBFImage> vd = VideoDisplay
+				.createOffscreenVideoDisplay(vc);
+
+		VideoDisplayListener<MBFImage> listener = new VideoDisplayListener<MBFImage>() {
+			String fileName = "/tmp/cake.png";
+			int frameCount = 0;
+
 			@Override
 			public void beforeUpdate(MBFImage frame) {
 
 				DisplayUtilities.displayName(frame, "CakeCam");
-				if(frameCount<200){
+				if (frameCount < 200) {
 					frameCount++;
 					return;
 				}
-				
+
 				File file = new File(fileName);
 				try {
 					ImageUtilities.write(frame, file);
@@ -62,64 +63,66 @@ public class CakeCam {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				 Properties properties = System.getProperties();
 
-			      // Setup mail server
-			      properties.setProperty("mail.smtp.host", "smtp.ecs.soton.ac.uk");
+				Properties properties = System.getProperties();
 
-			      // Get the default Session object.
-			      Session session = Session.getDefaultInstance(properties);
+				// Setup mail server
+				properties
+						.setProperty("mail.smtp.host", "smtp.ecs.soton.ac.uk");
 
-			      try{
-			         MimeMessage message = new MimeMessage(session);
+				// Get the default Session object.
+				Session session = Session.getDefaultInstance(properties);
 
-			         message.setFrom(new InternetAddress("pm5@ecs.soton.ac.uk", "CakeCam"));
-			         
-			         message.addRecipient(Message.RecipientType.TO,
-			                                  new InternetAddress("pm5@ecs.soton.ac.uk"));
+				try {
+					MimeMessage message = new MimeMessage(session);
 
-			         message.setSubject("[CakeCam] - Cake in Building 32 coffee room");
+					message.setFrom(new InternetAddress("pm5@ecs.soton.ac.uk",
+							"CakeCam"));
 
-			         BodyPart messageBodyPart = new MimeBodyPart();
+					message.addRecipient(Message.RecipientType.TO,
+							new InternetAddress("pm5@ecs.soton.ac.uk"));
 
-			         // Fill the message
-			         messageBodyPart.setText("This cake! or food can be found in the building 32 coffee room.");
+					message.setSubject("[CakeCam] - Cake in Building 32 coffee room");
 
-			         Multipart multipart = new MimeMultipart();
-			         multipart.addBodyPart(messageBodyPart);
+					BodyPart messageBodyPart = new MimeBodyPart();
 
-			         // Part two is attachment
-			         messageBodyPart = new MimeBodyPart();
-			         DataSource source = new FileDataSource(fileName);
-			         messageBodyPart.setDataHandler(new DataHandler(source));
-			         messageBodyPart.setFileName(fileName);
-			         multipart.addBodyPart(messageBodyPart);
+					// Fill the message
+					messageBodyPart
+							.setText("This cake! or food can be found in the building 32 coffee room.");
 
-			         // Put parts in message
-			         message.setContent(multipart);
+					Multipart multipart = new MimeMultipart();
+					multipart.addBodyPart(messageBodyPart);
 
+					// Part two is attachment
+					messageBodyPart = new MimeBodyPart();
+					DataSource source = new FileDataSource(fileName);
+					messageBodyPart.setDataHandler(new DataHandler(source));
+					messageBodyPart.setFileName(fileName);
+					multipart.addBodyPart(messageBodyPart);
 
-			         Transport.send(message);
-			         System.out.println("Sent message successfully....");
-			      }catch (MessagingException mex) {
-			         mex.printStackTrace();
-			      } catch (UnsupportedEncodingException e) {
+					// Put parts in message
+					message.setContent(multipart);
+
+					Transport.send(message);
+					System.out.println("Sent message successfully....");
+				} catch (MessagingException mex) {
+					mex.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				System.exit(0);
-				
+
 			}
-			
+
 			@Override
 			public void afterUpdate(VideoDisplay<MBFImage> display) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
 		vd.addVideoListener(listener);
 
-    }
+	}
 }
