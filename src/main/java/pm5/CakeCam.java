@@ -44,7 +44,6 @@ public class CakeCam {
 				.createOffscreenVideoDisplay(vc);
 
 		VideoDisplayListener<MBFImage> listener = new VideoDisplayListener<MBFImage>() {
-			String fileName = "/tmp/cake.png";
 			int frameCount = 0;
 
 			@Override
@@ -55,13 +54,16 @@ public class CakeCam {
 					frameCount++;
 					return;
 				}
-
-				File file = new File(fileName);
+				File file = null;
+				
 				try {
+					file = File.createTempFile("cake", ".png");
+					file.deleteOnExit();
 					ImageUtilities.write(frame, file);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					System.exit(1);
 				}
 
 				Properties properties = System.getProperties();
@@ -95,9 +97,9 @@ public class CakeCam {
 
 					// Part two is attachment
 					messageBodyPart = new MimeBodyPart();
-					DataSource source = new FileDataSource(fileName);
+					DataSource source = new FileDataSource(file.getAbsolutePath());
 					messageBodyPart.setDataHandler(new DataHandler(source));
-					messageBodyPart.setFileName(fileName);
+					messageBodyPart.setFileName(file.getName());
 					multipart.addBodyPart(messageBodyPart);
 
 					// Put parts in message
@@ -111,7 +113,6 @@ public class CakeCam {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				System.exit(0);
 
 			}
